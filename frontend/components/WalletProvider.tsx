@@ -18,7 +18,8 @@ export function WalletProvider({ children }: PropsWithChildren) {
           appId: undefined,
           // Learn more https://docs.mizu.io/docs/preparation/manifest-json
           manifestURL: "https://assets.mz.xyz/static/config/mizuwallet-connect-manifest.json",
-          aptosApiKey: APTOS_API_KEY,
+          // aptosApiKey is not a valid property for the mizuwallet config object
+          // Removing aptosApiKey since it's not supported in the type definition
         },
       }}
       optInWallets={["Mizu Wallet"]}
