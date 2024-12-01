@@ -3,7 +3,7 @@ import { AptosWalletAdapterProvider } from "@aptos-labs/wallet-adapter-react";
 // Internal components
 import { useToast } from "@/components/ui/use-toast";
 // Internal constants
-import { NETWORK, APTOS_API_KEY } from "@/constants";
+import { NETWORK } from "@/constants";
 
 export function WalletProvider({ children }: PropsWithChildren) {
   const { toast } = useToast();
