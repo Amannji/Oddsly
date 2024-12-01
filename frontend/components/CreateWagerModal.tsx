@@ -13,6 +13,7 @@ const cryptoOptions: CryptoOption[] = [
   { id: "apt", name: "Aptos", symbol: "APT", icon: "🪙" },
   { id: "usdc", name: "USD Coin", symbol: "USDC", icon: "💵" },
   { id: "eth", name: "Ethereum", symbol: "ETH", icon: "⟠" },
+  { id: "btc", name: "Bitcoin", symbol: "BTC", icon: "B" },
   // Add more options as needed
 ];
 
@@ -24,11 +25,14 @@ interface CreateWagerModalProps {
 export function CreateWagerModal({ isOpen, onClose }: CreateWagerModalProps) {
   const [title, setTitle] = useState("");
   const [selectedCrypto, setSelectedCrypto] = useState<CryptoOption | null>(null);
+  const [targetPrice, setTargetPrice] = useState("");
+  const [expiryDate, setExpiryDate] = useState("");
+  const [expiryTime, setExpiryTime] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Handle wager creation logic here
-    console.log({ title, selectedCrypto });
+    console.log({ title, selectedCrypto, targetPrice, expiryDate, expiryTime });
     onClose();
   };
 
@@ -78,8 +82,46 @@ export function CreateWagerModal({ isOpen, onClose }: CreateWagerModalProps) {
               </div>
             </div>
 
+            {/* Target Price Input */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Target Price (USD)</label>
+              <input
+                type="number"
+                step="0.01"
+                value={targetPrice}
+                onChange={(e) => setTargetPrice(e.target.value)}
+                className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Enter target price"
+                required
+              />
+            </div>
+
+            {/* Expiry Date and Time */}
+            <div className="flex gap-3">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Expiry Date</label>
+                <input
+                  type="date"
+                  value={expiryDate}
+                  onChange={(e) => setExpiryDate(e.target.value)}
+                  className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Expiry Time</label>
+                <input
+                  type="time"
+                  value={expiryTime}
+                  onChange={(e) => setExpiryTime(e.target.value)}
+                  className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  required
+                />
+              </div>
+            </div>
+
             {/* Action Buttons */}
-            <div className="flex gap-3 justify-end mt-6">
+            <div className="flex justify-between mt-6">
               <Button type="button" onClick={onClose} variant="outline" className="px-4 py-2">
                 Cancel
               </Button>
