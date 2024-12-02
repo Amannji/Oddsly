@@ -3,24 +3,32 @@
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowBigUp, ArrowBigDown, MessageCircle, Star } from "lucide-react";
+import { useWallet, InputTransactionData } from "@aptos-labs/wallet-adapter-react";
+import { VITE_MODULE_ADDRESS } from "@/constants";
+import { AptosClient } from "aptos";
 
 interface PredictionBlockProps {
+  id: string;
   title: string;
   volume: string;
   comments: number;
 }
 
 export default function PredictionBlock({
+  id = "0",
   title = "Trump ends Ukraine war by first 90 days?",
   volume = "$4m",
   comments = 887,
 }: PredictionBlockProps) {
   const [isAnimating, setIsAnimating] = useState(false);
   const [showDialog, setShowDialog] = useState(false);
-  const [choice, setChoice] = useState<"yes" | "no" | null>(null);
+  const [choice, setChoice] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [stakeAmount, setStakeAmount] = useState(0);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const { signAndSubmitTransaction } = useWallet();
+  const { account } = useWallet();
 
   useEffect(() => {
     const titleElement = titleRef.current;
@@ -39,8 +47,35 @@ export default function PredictionBlock({
     }
   }, [title]);
 
+  const confirmBet = async () => {
+    if (!account) return;
+    setIsLoading(true);
+    let idNumber = Number(id);
+    const transaction: InputTransactionData = {
+      data: {
+        function: `${VITE_MODULE_ADDRESS}::price_prediction::make_bet`,
+        functionArguments: [idNumber, choice, stakeAmount],
+      },
+    };
+
+    try {
+      const tx = await signAndSubmitTransaction(transaction);
+      const client = new AptosClient("https://fullnode.devnet.aptoslabs.com");
+      await client.waitForTransaction(tx.hash);
+      setIsLoading(false);
+      console.log("Bet placed successfully");
+      setShowDialog(false);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const handleBet = (betChoice: "yes" | "no") => {
-    setChoice(betChoice);
+    if (betChoice === "yes") {
+      setChoice(true);
+    } else {
+      setChoice(false);
+    }
     setShowDialog(true);
   };
 
@@ -88,7 +123,7 @@ export default function PredictionBlock({
             <h3 className="text-xl font-bold text-white mb-4">{title}</h3>
             <div className="flex items-center gap-2 mb-6">
               <div
-                className={`w-3 h-3 rounded-full ${choice === "yes" ? "bg-green-500 animate-pulse" : "bg-red-500 animate-pulse"}`}
+                className={`w-3 h-3 rounded-full ${choice ? "bg-green-500 animate-pulse" : "bg-red-500 animate-pulse"}`}
               ></div>
               <p className="text-white">You have chosen {choice}</p>
             </div>
@@ -116,8 +151,7 @@ export default function PredictionBlock({
               <Button
                 className="flex-1 bg-blue-600"
                 onClick={() => {
-                  // Handle bet transaction here
-                  setShowDialog(false);
+                  confirmBet();
                 }}
               >
                 Bet

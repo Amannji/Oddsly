@@ -49,6 +49,7 @@ export default function LiveBetsList() {
       {wagers.map((wager, index) => (
         <PredictionBlock
           key={index}
+          id={wager.wager_id}
           title={wager.title}
           volume={`$${Number(wager.total_up_stake) + Number(wager.total_down_stake)}`}
           comments={10}
