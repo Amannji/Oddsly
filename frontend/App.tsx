@@ -10,9 +10,11 @@ import LiveBetsList from "@/components/LiveBetsList";
 function App() {
   return (
     <>
-      <Header />
-      <LiveBetsList />
-      <StickyBottom />
+      <div>
+        <Header />
+        <LiveBetsList />
+        <StickyBottom />
+      </div>
     </>
   );
 }

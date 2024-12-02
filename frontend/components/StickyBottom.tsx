@@ -12,13 +12,15 @@ export function StickyBottom() {
 
   return (
     <>
-      <div className="flex items-center justify-center flex-col fixed bottom-0 w-full py-[2rem] bg-black">
+      <div className="flex items-center justify-center flex-col fixed bottom-0 w-full py-[2rem] bg-slate-900">
         {!connected ? (
           <div
             className="bg-blue-500 text-white rounded-full p-2 w-full h-full text-center text-xl"
             onClick={connectWallet}
           >
-            <div className="mx-4">{/* <WalletSelector /> */}</div>
+            <div className="mx-4">
+              <WalletSelector />
+            </div>
           </div>
         ) : (
           <div className="flex gap-4 w-full">
@@ -28,12 +30,7 @@ export function StickyBottom() {
             >
               Create
             </div>
-            <div
-              className="bg-purple-500 text-white rounded-full p-2 w-full h-full text-center text-xl cursor-pointer"
-              onClick={connectWallet}
-            >
-              Join
-            </div>
+
             <div
               className="bg-orange-500 text-white rounded-full p-2 w-full h-full text-center text-xl cursor-pointer"
               onClick={connectWallet}
