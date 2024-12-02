@@ -24,6 +24,8 @@ module prediction_wager::price_prediction {
         wager_id: u64,
         creator: address,
         title: String,
+        currency_id: String,
+        target_price: u64,
         stake_amount: u64,
         end_timestamp: u64,
         total_up_stake: u64,
@@ -61,6 +63,8 @@ module prediction_wager::price_prediction {
     public entry fun create_wager(
         creator: &signer,
         title: String,
+        currency_id: String,
+        target_price: u64,
         stake_amount: u64,
         duration_seconds: u64,
     ) acquires WagerList {
@@ -70,11 +74,13 @@ module prediction_wager::price_prediction {
             wager_id: vector::length(&wager_list.wagers),
             creator: creator_addr,
             title,
+            currency_id,
+            target_price,
             stake_amount,
             end_timestamp: timestamp::now_seconds() + duration_seconds,
             total_up_stake: 0,
-            total_down_stake: 0,
             total_up_participants: vector::empty(),
+            total_down_stake: 0,
             total_down_participants: vector::empty(),
             is_settled: false,
             winner: false,
@@ -87,6 +93,43 @@ module prediction_wager::price_prediction {
     public fun view_all_wagers(): vector<Wager> acquires WagerList {
         let wager_list = borrow_global<WagerList>(GLOBAL_WAGERS_ADDRESS);
         return wager_list.wagers
+    }
+
+    #[view]
+    public fun view_my_wagers(user: address): vector<Wager> acquires WagerList {
+        let wager_list = borrow_global<WagerList>(GLOBAL_WAGERS_ADDRESS);
+        let my_wagers = vector::empty<Wager>();
+        
+        let len = vector::length(&wager_list.wagers);
+        let i = 0;  
+        
+        while (i < len) {
+            let wager = vector::borrow(&wager_list.wagers, i);
+            if (vector::contains(&wager.total_up_participants, &user) || 
+                vector::contains(&wager.total_down_participants, &user)) {
+                vector::push_back(&mut my_wagers, *wager);
+            };
+            i = i + 1;
+        };
+        return my_wagers
+    }
+
+    #[view]
+    public fun view_new_wagers(user: address): vector<Wager> acquires WagerList {
+        let wager_list = borrow_global<WagerList>(GLOBAL_WAGERS_ADDRESS);
+        let new_wagers = vector::empty<Wager>();
+        let i = 0;
+        let len = vector::length(&wager_list.wagers);
+        while (i < len) {
+            let wager = vector::borrow(&wager_list.wagers, i);
+            if (!vector::contains(&wager.total_up_participants, &user) && 
+                !vector::contains(&wager.total_down_participants, &user)) {
+                vector::push_back(&mut new_wagers, *wager);
+            };
+
+            i = i + 1;
+        };
+        return new_wagers
     }
 
     
@@ -114,6 +157,8 @@ module prediction_wager::price_prediction {
         }
         }
     }
+
+     
         
 
     
