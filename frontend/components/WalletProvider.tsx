@@ -13,12 +13,12 @@ export function WalletProvider({ children }: PropsWithChildren) {
       autoConnect={true}
       dappConfig={{
         network: NETWORK,
+        aptosApiKey: APTOS_API_KEY,
         mizuwallet: {
           // Learn more https://docs.mizu.io/docs/preparation/mizu-app-id
           appId: undefined,
           // Learn more https://docs.mizu.io/docs/preparation/manifest-json
           manifestURL: "https://assets.mz.xyz/static/config/mizuwallet-connect-manifest.json",
-          aptosApiKey: APTOS_API_KEY,
         },
       }}
       optInWallets={["Mizu Wallet"]}
